@@ -1,0 +1,150 @@
+{% load my_filter %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>增加展点内容</title>
+    <link rel="stylesheet" href="{% static 'serverdb/css/bootstrap.min.css' %}">
+    <script type="text/javascript" src="{% static 'serverdb/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'serverdb/js/bootstrap.min.js' %}"></script>
+    <style>
+        .container {
+            margin-bottom: 5px;
+        }
+        select {
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            color: #555;
+            border: 1px solid #ccc;
+            box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+            border-radius: 0 4px 4px 0;
+            font-size: 14px;
+            line-height: 1.42857143;
+            outline: none;
+        }
+    </style>
+</head>
+<body> 
+    <div class="container">
+        <div class="modal-header">
+            <h2 class="modal-title" id="myModalLabel">信息修改</h2>
+        </div><br>
+        
+        <form action="/check/update_scan_info/{{ res_obj.id }}/admin/" method="get" enctype="multipart/form-data">{% csrf_token %}
+            <div class="input-group">
+                <span class="input-group-addon">资产编码:</span>
+                <input type="text" class="form-control" disabled value="{{ res_obj.code }}" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">资产名称:</span>
+                <input type="text" class="form-control" placeholder="填写资产" name="resource_name" value="{{ res_obj.name }}" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">所属公司:</span>
+                <select class="layui-form layui-col-md6 x-so" name="company" id="company" onchange="getValue()" lay-verify="">
+                    {% for obj in company_obj %}
+                    <option value="{{ obj.name }}" {% if obj.name == res_obj.company.name %} selected {% endif %}>{{ obj.name }}</option>
+                    {% endfor %}
+                </select>
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">所属部门:</span>
+                <select class="layui-form layui-col-md6 x-so" name="department" id="department" lay-verify="">
+                    {% for obj in department_obj %}
+                      <option {% if obj.name == res_obj.department.name %} selected {% endif %}>{{ obj.name }}</option>
+                    {% endfor %}
+                </select>
+                <!-- <input type="text" class="form-control" placeholder="请填写部门名" name="department" value="{{ res_obj.department.name }}" autocomplete="off"> -->
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">*责任所有人:</span>
+                <input type="text" class="form-control" placeholder="请填写责任所有人" value="{{ res_obj.duty }}" name="duty_user" id="duty_user" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">资产状态:</span>
+                <select class="layui-form layui-col-md6 x-so" id="selectChange" name="resource_status" onchange="SetValue()" lay-verify="">
+                    <!-- <option value="{{ res_obj.resource_status }}">{{ res_obj.resource_status }}</option> -->
+                    {% for obj in status_obj %}
+                      <option {% if res_obj.resource_status == obj.name %} selected {% endif %}>{{ obj.name }}</option>
+                    {% endfor %}
+                </select>
+            </div><br>
+            <div id="borrowInfo" {% if res_obj.resource_status != "在用" %} style="display: none;" {% endif %}>
+                <div class="input-group">
+                    <span class="input-group-addon">借用部门:</span>
+                    <input type="text" class="form-control" placeholder="请填写部门名" name="borrow_department" value="{{ res_obj.borrow_department }}" autocomplete="off">
+                </div><br>
+                <div class="input-group">
+                    <span class="input-group-addon">借用人:</span>
+                    <input type="text" class="form-control" placeholder="请填写借用人名" name="borrow_user" value="{{ res_obj.user }}" autocomplete="off">
+                </div><br>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon">存放区域:</span>
+                <input type="text" class="form-control" placeholder="例：深圳保税区" name="location_area" value="{{ res_obj.location_area }}" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">存放地点:</span>
+                <input type="text" class="form-control" placeholder="请填写详细存放地点" name="location" value="{{ res_obj.location }}" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">规格型号:</span>
+                <input type="text" class="form-control" placeholder="例：MagicBook 15" name="specifications" value="{{ res_obj.detail_info.specifications|ValueToStr }}" autocomplete="off">
+            </div><br>
+            <input type="submit" class="btn btn-success btn-lg btn-block" value="提交">
+        </form>
+    </div>
+</body>
+
+<script type="text/javascript" src="{% static 'layui/layui.js' %}"></script>
+<script>
+    var info = {{ aaa|safe }}
+    layui.use('laydate', function(){
+    var laydate = layui.laydate;
+    
+    //执行一个laydate实例
+    laydate.render({
+        elem: '#up_time' //指定元素
+    });
+    //执行一个laydate实例
+    laydate.render({
+        elem: "#borrow_time"
+    });
+    //执行一个laydate实例
+    laydate.render({
+        elem: '#buy_time' //指定元素
+    });
+    //执行一个laydate实例
+    laydate.render({
+        elem: '#return_time'
+    });
+    });
+    
+    function SetValue(){
+        var status = $("#selectChange").val()
+        if(status=="在用" || status=="借用" ){
+            $("#borrowInfo").css("display","block");
+        }else{
+            $("#borrowInfo").css("display","none");
+        }
+    }
+
+    // 随公司改变获取相应的部门
+    function getValue(){
+        var company_name = $("#company").val();
+        var departments = info[company_name] //获取对应公司的所有部门
+        long = departments.length
+        // 请求成功后先清除原有选项
+        $("#department").find("option").remove();
+        if(long!=0){
+            for(var i=0;i<long;i++){
+                $("#department").append("<option value="+departments[i]+">"+departments[i]+"</option>");
+            }
+        }else{
+            $("#department").append("<option value="+"None"+">"+"暂无对应部门"+"</option>");
+        }
+    }
+</script>
+</html>

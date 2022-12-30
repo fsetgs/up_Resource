@@ -1,0 +1,32 @@
+
+<div class="page">
+    <div id="pages" class="text-center">
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+        <li>
+            {% if index_list.has_previous %}
+            <a class="active" href="?page={{ index_list.previous_page_number }}">&laquo;</a>
+            {% endif %}
+        </li>
+        {% if index_list.paginator.page_range|length != 1 %}
+            {% for page_num in pageRange %}
+            {% if page_num == index_list.number %}
+                <li class="active">
+                <a href="#" style="background-color: cadetblue;">{{ page_num }}</a>
+                </li>
+            {% else %}
+                <li>
+                <a href="?page={{ page_num }}">{{ page_num }}</a>
+                </li>
+            {% endif %}
+            {% endfor %}
+        {% endif %}
+        <li>
+            {% if index_list.has_next %}
+            <a class="active" href="?page={{ index_list.next_page_number }}">&raquo;</a>
+            {% endif %}
+        </li>
+        </ul>
+    </nav>
+    </div>
+</div>

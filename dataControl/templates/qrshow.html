@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="{% static 'serverdb/css/xadmin.css' %}"> -->
+    <title>标签打印</title>
+    <style>
+        * {
+           margin: 0;
+           padding: 0;
+           font-size: 20px;
+           font-weight: 400;
+        }
+        ul li {
+            list-style: none;
+            margin-bottom: 10px;
+        }
+        .img-body {
+            margin-top: 10%;
+        }
+        .header {
+            height: 200px;
+            overflow: hidden;
+        }
+        .img-left-container {
+            float: left;
+            width: 60%;
+        }
+        .left {
+            margin-top: -50%;
+            margin-left: -65%;
+            width: 250%;
+        }
+        .img-right-container {
+            float: left;
+            width: 40%;
+        }
+        .right {
+            width: 50%;
+            margin-left: 20%;
+        }
+        .content {
+            margin-left: 12%;
+        }
+        button {
+            background-color: #30a89d;
+            color: white;
+            border-style: none;
+            border-radius: 2px;
+            outline: none;
+            padding: 5px 20px;
+            position: absolute;
+            left: calc(50% - 25px);
+            bottom: 20%;
+            
+        }
+        button:hover {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="img-body">
+        <div class="header">
+            <div class="img-left-container">
+                <img class="left" src="{% static '/img/company1.png' %}" alt="">
+            </div>
+            <div class="img-right-container">
+                <img class="right" src="/media/QR_img/{{res_obj.code}}.jpg" alt="000">
+            </div>
+        </div>
+        <div class="content">
+            <ul>
+                <li>资产名称：{{ res_obj.name }}</li>
+                <li>资产编码：{{ res_obj.code }}</li>
+                <li>规格型号：{{ res_obj.detail_info.specifications }}</li>
+            </ul>
+        </div>
+    </div>
+    <button class="layui-btn layui-btn" onclick="outprint()">打印</button>
+    <script type="text/javascript" src="{% static 'serverdb/js/jquery.min.js' %}"></script>
+    <script>
+        function outprint(){
+            $("button").css('display','none');
+            window.print()
+            $("button").css('display','block');
+        }
+    </script>
+</body>
+</html>

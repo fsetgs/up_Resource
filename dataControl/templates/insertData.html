@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>增加展点内容</title>
+    <link rel="stylesheet" href="{% static 'serverdb/css/bootstrap.min.css' %}">
+    <script type="text/javascript" src="{% static 'serverdb/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'serverdb/js/bootstrap.min.js' %}"></script>
+    <style>
+        .container {
+            margin-bottom: 5px;
+        }
+        select {
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            color: #555;
+            border: 1px solid #ccc;
+            box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+            border-radius: 0 4px 4px 0;
+            font-size: 14px;
+            line-height: 1.42857143;
+            outline: none;
+        }
+        #options_background {
+            display: none;
+            background-color: white;
+            width: 630px;
+            position: absolute;
+            z-index: 3;
+            left: 172px;
+            border: 1px solid #767676;
+        }
+        #options {
+            width: 100%;
+            padding-left: 15px;
+        }
+        #options:hover {
+            background-color: #1e90ff;
+        }
+    </style>
+</head>
+<body> 
+    <div class="container">
+        <div class="modal-header">
+            <h2 class="modal-title" id="myModalLabel">添加资产</h2>
+        </div><br>
+        
+        <form action="/data/insertData/" method="POST" enctype="multipart/form-data">{% csrf_token %}
+            <!-- <div class="input-group">
+                <span class="input-group-addon">*资产名称:</span>
+                <input type="text" class="form-control" placeholder="填写资产" name="resource_name" autocomplete="off">
+            </div><br> -->
+            <div class="input-group">
+                <span class="input-group-addon">*资产名称:</span>
+                <select class="layui-form layui-col-md6 x-so" name="resource_name" lay-verify="">
+                    <option value="">请选择资产名称</option>
+                    {% for obj in resourcename_obj %}
+                      <option>{{ obj.name }}</option>
+                    {% endfor %}
+                </select>
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">*所属公司:</span>
+                <select class="layui-form layui-col-md6 x-so" name="company" id="company" onchange="getValue()" lay-verify="">
+                    <option value="">请选择所属公司</option>
+                    {% for obj in company_obj %}
+                      <option>{{ obj.name }}</option>
+                    {% endfor %}
+                </select>
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">*所属部门:</span>
+                <select class="layui-form layui-col-md6 x-so" name="department" id="department" lay-verify="">
+                    <option value="">请选择所属部门</option>
+                    <!-- {% for obj in department_obj %}
+                      <option>{{ obj.name }}</option>
+                    {% endfor %} -->
+                </select>
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">*责任所有人:</span>
+                <input type="text" class="form-control" placeholder="请填写责任所有人" name="duty_user" id="duty_user" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">*资产分类:</span>
+                <select class="layui-form layui-col-md6 x-so" name="resource_type" lay-verify="">
+                    <option value="">请选择资产类型</option>
+                    {% for obj in type_obj %}
+                      <option value="{{ obj.id }}">{{ obj.name }}</option>
+                    {% endfor %}
+                </select>
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">*资产来源:</span>
+                <!-- <input class="layui-form layui-col-md6 x-so" id="from" onclick="onfrom()" type="text" style="position: absolute;"> -->
+                <input style="z-index: 2;" type="text" class="form-control" id="from" name="resource_from" placeholder="填写资产来源" autocomplete="off">
+                <!-- <select class="layui-form layui-col-md6 x-so" id="select_from" name="resource_from" lay-verify="">
+                    <option value="">请选择资产来源</option>
+                    {% for obj in from_obj %}
+                      <option>{{ obj.name }}</option>
+                    {% endfor %}
+                </select> -->
+            </div>
+            <div id="options_background">
+                {% for obj in from_obj %}
+                  <div id="options" onclick="chose_options('{{ obj.name }}')">{{ obj.name }}</div>
+                {% endfor %}
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">*资产状态:</span>
+                <select class="layui-form layui-col-md6 x-so" id="selectChange" name="resource_status" onchange="SetValue()" lay-verify="">
+                    <option value="">请选择资产状态</option>
+                    {% for obj in status_obj %}
+                      <option>{{ obj.name }}</option>
+                    {% endfor %}
+                </select>
+            </div><br>
+            <div id="borrowInfo" style="display: none;">
+                <div class="input-group">
+                    <span class="input-group-addon">领用&借用部门:</span>
+                    <select class="layui-form layui-col-md6 x-so" name="borrow_department" id="borrow_department" lay-verify="">
+                        <option value="">请选择所属部门</option>
+                        <!-- {% for obj in department_obj %}
+                          <option>{{ obj.name }}</option>
+                        {% endfor %} -->
+                    </select>
+                </div><br>
+                <div class="input-group">
+                    <span class="input-group-addon">领用&借用人:</span>
+                    <input type="text" class="form-control" placeholder="请填写借用人名" name="borrow_user" id="borrow_user" autocomplete="off">
+                </div><br>
+                <div class="input-group">
+                        <span class="input-group-addon">领用&借用日期:</span>
+                        <input type="text" class="layui-input form-control" name="borrow_time" id="borrow_time" autocomplete="off" placeholder="yyyy-MM-dd" >
+                </div><br>
+                <div class="input-group">
+                        <span class="input-group-addon">预归还日期:</span>
+                        <input type="text" class="layui-input form-control" name="return_time" id="return_time" autocomplete="off" placeholder="yyyy-MM-dd" >
+                </div><br>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon">*存放区域:</span>
+                <select class="layui-form layui-col-md6 x-so" name="location_area" lay-verify="">
+                    <option value="">请选择存放区域</option>
+                    {% for obj in localtion_area %}
+                      <option>{{ obj.name }}</option>
+                    {% endfor %}
+                </select>
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">*存放地点:</span>
+                <input type="text" class="form-control" placeholder="请填写详细存放地点" name="location" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                    <span class="input-group-addon">*入库日期:</span>
+                    <input type="text" class="layui-input form-control" name="storage_time" id="up_time" autocomplete="off" placeholder="yyyy-MM-dd" >
+            </div><br>
+            <div class="input-group">
+                    <span class="input-group-addon">*购置日期:</span>
+                    <input type="text" class="layui-input form-control" name="buy_time" id="buy_time" autocomplete="off" placeholder="yyyy-MM-dd" >
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">资产原值(元):</span>
+                <input type="text" class="form-control" placeholder="填写数字即可" name="resource_price" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">折旧周期(月):</span>
+                <input type="text" class="form-control" placeholder="填写数字即可" value="60" name="depreciation_period" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">残值率(%):</span>
+                <input type="text" class="form-control" placeholder="填写数字即可" value="5" name="residuals_rate" autocomplete="off">
+            </div><br>
+            <!-- <div class="input-group">
+                <span class="input-group-addon">资产残值(元):</span>
+                <input type="text" class="form-control" placeholder="填写数字即可" name="resource_residuals" autocomplete="off">
+            </div><br> -->
+            <div class="input-group">
+                <span class="input-group-addon">规格型号:</span>
+                <input type="text" class="form-control" placeholder="例：MagicBook 15" name="specifications" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">*计量单位:</span>
+                <select class="layui-form layui-col-md6 x-so" name="units" lay-verify="">
+                    <option value="">请选择计量单位</option>
+                    {% for obj in units_obj %}
+                      <option>{{ obj.name }}</option>
+                    {% endfor %}
+                </select>
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">供应商:</span>
+                <select class="layui-form layui-col-md6 x-so" name="provider" lay-verify="">
+                    <option value="">请选择供应商</option>
+                    {% for obj in provider_obj %}
+                      <option>{{ obj.name }}</option>
+                    {% endfor %}
+                </select>
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">SN号:</span>
+                <input type="text" class="form-control" placeholder="SN号" name="sn" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">MAC:</span>
+                <input type="text" class="form-control" placeholder="MAC" name="mac" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">备注:</span>
+                <input type="text" class="form-control" placeholder="备注(不超过20字)" name="comment" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">批量添加:</span>
+                <select class="layui-form layui-col-md6 x-so" name="addnum" lay-verify="">
+                    <option value="1">× 1</option>
+                    <option value="2">× 2</option>
+                    <option value="3">× 3</option>
+                    <option value="4">× 4</option>
+                    <option value="5">× 5</option>
+                    <option value="6">× 6</option>
+                    <option value="7">× 7</option>
+                    <option value="8">× 8</option>
+                    <option value="9">× 9</option>
+                    <option value="10">× 10</option>
+                </select>
+            </div><br>
+            <input type="submit" class="btn btn-success btn-lg btn-block" onclick="result()" value="提交">
+        </form>
+    </div>
+</body>
+
+<script type="text/javascript" src="{% static 'layui/layui.js' %}"></script>
+<script>
+    layui.use('laydate', function(){
+    var laydate = layui.laydate;
+    
+    //执行一个laydate实例
+    laydate.render({
+        elem: '#up_time' //指定元素
+    });
+    //执行一个laydate实例
+    laydate.render({
+        elem: "#borrow_time"
+    });
+    //执行一个laydate实例
+    laydate.render({
+        elem: '#buy_time' //指定元素
+    });
+    //执行一个laydate实例
+    laydate.render({
+        elem: '#return_time'
+    });
+    });
+    
+    function SetValue(){
+        var status = $("#selectChange").val()
+        if(status=="在用" || status=="借用" ){
+            $("#borrowInfo").css("display","block");
+        }else{
+            $("#borrowInfo").css("display","none");
+        }
+    }
+
+    // 随公司改变获取相应的部门
+    function getValue(){
+        var company_name = $("#company").val();
+        var data = new FormData();
+        data.append("company_name",company_name)
+        $.ajax({
+			type:"POST",
+			url:"/data/detail_show/0/",
+			data:data,
+			processData:false,
+			contentType:false,
+			dataType:"json",
+			success:function(result){
+                // 请求成功后先清除原有选项
+                $("#department").find("option").remove();
+                $("#borrow_department").find("option").remove();
+                var long = Object.keys(result).length
+				if(long!=0){
+                    $("#department").append("<option value="+"None"+">"+"请选择所属部门"+"</option>");
+                    $("#borrow_department").append("<option value="+"None"+">"+"请选择所属部门"+"</option>");
+                    for(var i=0;i<long;i++){
+                        $("#department").append("<option value="+result[i]+">"+result[i]+"</option>");
+                        $("#borrow_department").append("<option value="+result[i]+">"+result[i]+"</option>");
+                    }
+                }else{
+                    $("#department").append("<option value="+"None"+">"+"暂无对应部门"+"</option>");
+                    $("#borrow_department").append("<option value="+"None"+">"+"暂无对应部门"+"</option>");
+                }
+			}
+        });
+    }
+    function chose_options(name){
+        console.log(name)
+        $("#from").val(name)
+        $("#options_background").attr("style","display:none");
+    }
+    // function chose_from(){
+    //     $("#options_background").attr("style","display:block");
+    // }
+    $("body").on("click",function(e){
+        console.log("1111")
+        var target = $(e.target)
+        if(target.is($('#from'))){
+            $("#options_background").attr("style","display:block");
+        }else{
+            $("#options_background").attr("style","display:none");
+        }
+    })
+
+    var click_num = 1
+    function result(){
+        if(click_num == 1){
+            $("input[type=submit]").val("提交中...")
+            click_num += 1
+        }else{
+            alert("添加中，请勿重复点击提交。")
+        }
+    }
+</script>
+</html>

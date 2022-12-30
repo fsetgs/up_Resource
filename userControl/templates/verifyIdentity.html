@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="{% static 'serverdb/js/jquery.min.js' %}"></script>
+    <title>Document</title>
+</head>
+<body>
+    <h1>身份校验中请稍后...</h1>
+</body>
+<script src="https://g.alicdn.com/dingding/dingtalk-jsapi/2.8.5/dingtalk.open.js"></script>
+<script>
+dd.ready(function() {
+    dd.runtime.permission.requestAuthCode({
+        corpId:"dinge2a49b8c0bc04478", // 企业id
+        onSuccess: function (info) {
+            code = info.code // 通过该免登授权码可以获取用户身份
+            window.location.href = "/user/verifyIdentity/?code=" + code
+        }});
+});
+</script>
+</html>

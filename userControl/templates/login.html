@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/static/css/normalize.css">
+    <link rel="stylesheet" href="/static/css/a_login.css">
+    <title>丝路资产管理</title>
+</head>
+<body>
+    <div class="form">
+        <h1>登录页面</h1>
+        <form action="/user/login/" method="post">
+            {% csrf_token %}
+            <ul>
+                <li>
+                    <label for="">手机号:</label> <input name="phone" value="" type="text" placeholder="请输入手机号">
+                </li>
+                <li>
+                    <label for="">密码:&nbsp;&nbsp;&nbsp;</label> <input name="password" type="password" placeholder="请输入密码">
+                </li>
+                <li>
+                    <input type="submit" value="登录">
+                </li>
+            </ul>
+            
+            
+            <div>
+                <a href="/user/register/">注册新账号</a>
+            </div>
+
+        </form>
+        {% if message %}
+        <span style="display: none;">{{ message }}</span>
+        {% endif %}
+    </div>
+    <script src="/static/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/layui/layui.js"></script>
+    <script>
+        var message = $("span").text()
+        if(message){
+            console.log(message)
+            layer.open({
+                title: '登陆提示'
+                ,content: message
+            });     
+  
+        }
+    </script>
+</body>
+</html>

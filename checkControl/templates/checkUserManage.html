@@ -1,0 +1,154 @@
+{% load static %}
+{% load my_filter %}
+<!DOCTYPE html>
+<html lang='ch'>
+
+<head>
+  <meta charset="UTF-8">
+  <title>展项内容</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <link rel="shortcut icon" href="{% static 'serverdb/img/favicon.ico' %}" type="image/x-icon" />
+  <link rel="stylesheet" href="{% static 'serverdb/css/font.css' %}">
+  <link rel="stylesheet" href="{% static 'serverdb/css/xadmin.css' %}">
+  <style>
+    th,
+    tr {
+      text-align: center !important;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="x-nav">
+    <span class="layui-breadcrumb">
+      <a href="">--</a>
+      <a href="">--</a>
+      <a>
+        <cite>--</cite>
+      </a>
+    </span>
+
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin:3px;float:right" href="/check/checkUserManage/"
+      title="刷新">
+      <i class="layui-icon" style="line-height:30px">&#xe669;</i>
+    </a>
+
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+      onclick="x_admin_show('新增界面','/check/insertCheckUser/',900,800)" href="javascript:;" title="上传">
+      <i class="layui-icon" style="line-height:30px">添加盘点员</i>
+    </a>
+  </div>
+  <div class="x-body">
+    <div class="layui-row">
+      <form id="form1" class="layui-form layui-col-md6 x-so" action="" method="get">
+        <input class="layui-input" placeholder="按资产编码查询" name="search1" id="search1" autocomplete="off">
+        <button id="layui-btn1" class="layui-btn" lay-submit="" lay-filter="sreach"><i
+            class="layui-icon">&#xe615;</i></button>
+      </form>
+
+      <form id="form2" class="layui-form layui-col-md6 x-so" action="" method="post">{% csrf_token %}
+        <input class="layui-input" placeholder="按资产名称查询" name="search2" id="search2" autocomplete="off">
+        <button id="layui-btn2" class="layui-btn" lay-submit="" lay-filter="sreach"><i
+            class="layui-icon">&#xe615;</i></button>
+      </form>
+    </div>
+    <xblock>
+      <!-- <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button> -->
+      <!-- <button class="layui-btn" onclick="x_admin_show('添加用户','./member-add.html',600,400)"><i class="layui-icon"></i>添加</button> -->
+      <span class="x-right" style="line-height:40px">共有数据：{{ lenlist }} 条</span>
+    </xblock>
+    <table class="layui-table">
+      <thead>
+        <tr>
+          <th>管理盘点单</th>
+          <th>盘点人姓名</th>
+          <th>盘点人手机号</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      {% for foo in index_list %}
+      <tbody>
+          <td>{{ foo.t_check.name }}</td>
+          <td>{{ foo.name }}</td>
+          <td>{{ foo.phone }}</td>
+          <td class="td-manage">
+            <a class="layui-btn layui-btn-small" style="line-height:1.6em;"
+              onclick="x_admin_show('修改信息','/check/update_checkUserManage/{{foo.id}}/',900,800)" href="javascript:;" title="修改">
+              <i class="layui-icon" style="line-height:30px;">修改信息</i>
+            </a>
+            <a class="layui-btn layui-btn-small layui-btn-danger" title="删除后其不再拥有盘点员权限" href="/check/deleteCheckUser/{{foo.id}}/">
+              <i class="layui-icon">&#xe640;</i>删除盘点员
+            </a>
+          </td>
+      </tbody>
+      {% endfor %}
+    </table>
+
+    {% include 'paginator.html' %}
+    <script type="text/javascript" src="{% static 'serverdb/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'serverdb/lib2/layui/layui.js' %}" charset="utf-8"></script>
+    <script type="text/javascript" src="{% static 'serverdb/js/xadmin.js' %}"></script>
+    <script>
+      layui.use('element', function () {
+        var element = layui.element;
+      });
+
+      $("#layui-btn1").click(function () {
+        var input_str = $("input[name='search1']").val();
+        //若对查询进行空点，则不给予反应
+        if (input_str.length === 0) {
+          return false;
+        } else {
+          document.getElementById("form1").action = '/data/search_resource/';
+        }
+      })
+
+      $("#layui-btn2").click(function () {
+        var input_str = $("input[name='search2']").val();
+        //若对查询进行空点，则不给予反应
+        if (input_str.length === 0) {
+          return false;
+        } else {
+          document.getElementById("form2").action = '/data/search_resource/';
+        }
+      })
+
+     
+      var is_showo = "close"; //close代表关闭状态
+      var num = 0;
+      var ID = 0;
+      function showData(id) {
+        console.log(is_showo)
+        if (num == 0){
+          ID = id;
+          num += 1;
+        }
+        if (ID == id){
+          if (is_showo === "close") {
+            is_showo = "open"; //open代表打开状态
+            $("." + id).css("display", "");
+          } else if(is_showo === "open"){
+            $("." + id).css("display", "none");
+            is_showo = "close";
+          }
+        }else {
+          $("."+ID).css("display","none")
+          is_showo = "close"
+          ID = id
+          if (is_showo === "close") {
+            is_showo = "open"; //open代表打开状态
+            $("." + id).css("display", "");
+          } else if(is_showo === "open"){
+            $("." + id).css("display", "none");
+            is_showo = "close";
+          }
+        }
+      }
+
+    </script>
+
+</body>
+
+</html>

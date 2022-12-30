@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    <title>Document</title>
+</head>
+<body>
+    <div class="register">
+        <form action="/user/register/" method="post">
+            {% csrf_token %}
+            <h1>注册页面</h1>
+            <ul>
+                <li>
+                    <label for="username">用户名:</label> <input name="username" placeholder="请输入用户名" type="text">
+                </li>
+                <li>
+                    <label for="">密码:</label> <input name="password1" placeholder="请输入密码" type="password">
+                </li>
+                <li>
+                    <label for="">确认密码:</label> <input name="password2" placeholder="请确认密码" type="password">
+                </li>
+                <li>
+                    <label for="">手机号:</label> <input name="phone" placeholder="请输入你的手机号" type="password">
+                </li>
+                <li><input type="submit" value="注册"></li>
+            </ul>
+            <a href="/user/login/">跳转登录</a>
+            {% if message %}
+            <span style="display: none;">{{ message }}</span>
+            {% endif %}
+        </form>
+    </div>
+    <script src="/static/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/layui/layui.js"></script>
+    <script>
+        var message = $("span").text()
+        if(message){
+            console.log(message)
+            layer.open({
+                title: '注册提示'
+                ,content: message
+            });     
+  
+        }
+    </script>
+</body>
+</html>

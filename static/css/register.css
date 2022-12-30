@@ -1,0 +1,56 @@
+.register {
+    position: absolute;
+    left: calc(50% - 300px);
+    top: 20%;
+    /* top: calc(50% - 200px); */
+    display: flex;
+    width: 600px;
+    height: 450px;
+    margin: 0 auto;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+}
+.register h1 {
+    text-align: center;
+    padding: 20px 0;
+    color: white;
+}
+.register li {
+    margin: 5px 0;
+    position: relative;
+    width: 400px;
+    font-size: 24px;
+    height: 50px;
+    line-height: 50px;
+
+}
+.register li label {
+    color: white;
+}
+.register li input {
+    position: absolute;
+    right: 0;
+    width: 250px;
+    height: 50px;
+    border-radius: 10px;
+    border: 2px solid gray;
+    outline: none;
+    padding-left: 10px;
+    font-size: 16px;
+}
+.register li:last-child input{
+    background-color: #f7296f;
+    margin-top: 20px;
+}
+.register li:last-child input:hover {
+    background-color: gray;
+    cursor: pointer;
+}
+.register a {
+    position: absolute;
+    right: 100px;
+    bottom: 20px;
+    color: white;
+}

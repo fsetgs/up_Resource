@@ -1,0 +1,179 @@
+{% load static %}
+<!doctype html>
+<html lang="ch">
+<head>
+	<meta charset="UTF-8">
+	<title>丝路资产管理</title>
+	<meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+    <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon" />
+    <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+	<link rel="stylesheet" href="{% static 'css/xadmin.css' %}">
+    <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'layui/layui.js' %}" charset="utf-8"></script>
+    <script type="text/javascript" src="{% static 'js/xadmin.js' %}"></script>
+    <style>
+       test{
+           margin-left: 20px !important;
+       }
+    </style>
+
+</head>
+<body>
+    <!-- 顶部开始 -->
+    <div class="container">
+        <div class="logo"><a href="">丝路资产管理</a></div>
+
+        <div class="left_open">
+            <i title="展开左侧栏" class="layui-icon">&#xe668;</i>
+            
+        </div>
+        <!-- <div><a class="x-right">打开控制端</a></div> -->
+        
+    </div>
+    <!-- 顶部结束 -->
+    <!-- 中部开始 -->
+     <!-- 左侧菜单开始 -->
+    <div class="left-nav">
+      <div id="side-nav">
+        <ul id="nav">
+            <li>
+                <a href="">
+                    <i class="layui-icon">&#xe68e;</i>
+                    <cite>首页</cite>
+                    <i class="layui-icon nav_right">&#xe603;</i>
+                </a>
+            </li>
+            
+            <li>
+                <a _href="javascript:;">
+                    <i class="layui-icon">&#xe656;</i>
+                    <cite>资产 / 管理</cite>
+                    <i class="layui-icon nav_right">&#xe603;</i>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a _href="/data/data_show/">
+                            <i class="layui-icon">&#xe67e;</i>
+                            <cite>资产展示 · 采集</cite>    
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="/data/borrow_show/">
+                            <i class="layui-icon">&#xe67e;</i>
+                            <cite>资产展示 · 借用</cite>    
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="#">
+                            <i class="layui-icon" style="padding-left: 5px;">&#xe632;</i>
+                            <cite>资产选填补充</cite>    
+                        </a>
+                        <ul class="sub-menu">
+                            <li>
+                                <a _href="/data/type_show/">
+                                    <i class="layui-icon" style="padding-left: 15px;">&#xe67e;</i>
+                                    <cite>分类补充</cite>    
+                                </a>
+                            </li>
+                            <li>
+                                <a _href="/data/company_show/">
+                                    <i class="layui-icon" style="padding-left: 15px;">&#xe67e;</i>
+                                    <cite>公司补充</cite>    
+                                </a>
+                            </li>
+                            <li>
+                                <a _href="/data/department_show/">
+                                    <i class="layui-icon" style="padding-left: 15px;">&#xe67e;</i>
+                                    <cite>部门补充</cite>    
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+
+            <li>
+                <a _href="javascript:;">
+                    <i class="layui-icon">&#xe63c;</i>
+                    <cite>资产 / 盘点</cite>
+                    <i class="layui-icon nav_right">&#xe603;</i>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a _href="/check/check_index/">
+                            <i class="layui-icon">&#xe67e;</i>
+                            <cite>盘点 · 管理</cite>    
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="/check/check_show/">
+                            <i class="layui-icon">&#xe67e;</i>
+                            <cite>已盘 · 未盘</cite>    
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="/check/checkUserManage/">
+                            <i class="layui-icon">&#xe67e;</i>
+                            <cite>盘点员管理</cite>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a _href="/data/up_fileData/">
+                    <i class="layui-icon">&#xe629;</i>
+                    <cite>资产快速录入</cite>
+                    <i class="layui-icon nav_right">&#xe603;</i>
+                </a>
+            </li>
+
+            <li>
+                <a _href="javascript:;">
+                    <i class="layui-icon">&#xe66f;</i>
+                    <cite>用户 / 管理</cite>
+                    <i class="layui-icon nav_right">&#xe603;</i>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a _href="/user/usershow/">
+                            <i class="layui-icon">&#xe67e;</i>
+                            <cite>用户信息</cite>    
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+    
+    <!-- <div class="x-slide_left"></div> -->
+    <!-- 左侧菜单结束 -->
+    <!-- 右侧主体开始 -->
+    <div class="page-content">
+        <div class="layui-tab tab" lay-filter="xbs_tab" lay-allowclose="false">
+          <ul class="layui-tab-title">
+            <li>我的桌面</li>
+          </ul>
+          <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <iframe class="aaa" src='/main/index_data/' frameborder="0" scrolling="yes" class="x-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="page-content-bg"></div>
+    <!-- 右侧主体结束 -->
+    <!-- 中部结束 -->
+    <!-- 底部开始 -->
+    <div class="footer">
+        <div class="copyright">Copyright ©2022 resource_admin v1.0 All Rights Reserved</div>  
+    </div>
+    
+</body>
+
+</html>

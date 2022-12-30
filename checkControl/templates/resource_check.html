@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资产盘点</title>
+    <link rel="stylesheet" href="{% static 'serverdb/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
+    <script type="text/javascript" src="{% static 'serverdb/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'serverdb/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'layui/layui.js' %}"></script>
+    <style>
+        .container {
+            margin-bottom: 5px;
+        }
+
+        select {
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            color: #555;
+            border: 1px solid #ccc;
+            box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+            border-radius: 0 4px 4px 0;
+            font-size: 14px;
+            line-height: 1.42857143;
+            outline: none;
+        }
+
+        #options_background {
+            display: none;
+            background-color: white;
+            width: 630px;
+            position: absolute;
+            z-index: 3;
+            left: 172px;
+            border: 1px solid #767676;
+        }
+
+        #options {
+            width: 100%;
+            padding-left: 15px;
+        }
+
+        #options:hover {
+            background-color: #1e90ff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="modal-header">
+            <h2 class="modal-title" id="myModalLabel">资产信息</h2>
+        </div><br>
+
+        <form class="layui-form" action="/check/update_scan_info/{{ res_obj.id }}/admin/" method="get" enctype="multipart/form-data">{% csrf_token %}
+            <div class="input-group">
+                <span class="input-group-addon">资产编码:</span>
+                <input type="text" class="form-control" placeholder="填写资产" disabled value="{{ res_obj.code }}"
+                    name="resource_code" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">资产名称:</span>
+                <input type="text" class="form-control" placeholder="填写资产" disabled value="{{ res_obj.name }}"
+                    name="resource_name" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">资产状态:</span>
+                <input type="text" class="form-control" placeholder="填写资产" disabled
+                    value="{{ res_obj.resource_status }}" name="resource_status" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">所属公司:</span>
+                <input type="text" class="form-control" placeholder="填写资产" disabled value="{{ res_obj.company.name }}"
+                    name="company" autocomplete="off">
+            </div><br>
+            <!-- <div class="input-group">
+                <span class="input-group-addon">所属部门:</span>
+                <input type="text" class="form-control" placeholder="填写资产" disabled
+                    value="{{ res_obj.department.name }}" name="department" autocomplete="off">
+            </div><br> -->
+            <div class="input-group">
+                <span class="input-group-addon">存放区域:</span>
+                <input type="text" class="form-control" placeholder="填写存放区域" disabled
+                    value="{{ res_obj.location_area }}" name="location_area" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">存放地点:</span>
+                <input type="text" class="form-control" placeholder="填写存放地点" disabled value="{{ res_obj.location }}"
+                    name="location" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">在用部门:</span>
+                <input type="text" class="form-control" placeholder="请填写在用部门" disabled
+                    value="{{ res_obj.borrow_department }}" name="duty_user" id="duty_user" autocomplete="off">
+            </div><br>
+            <!-- <div class="input-group">
+                <span class="input-group-addon">资产所有人:</span>
+                <input type="text" class="form-control" placeholder="请填资产所有人" disabled value="{{ res_obj.duty }}"
+                    name="duty_user" id="duty_user" autocomplete="off">
+            </div><br> -->
+            <div class="input-group">
+                <span class="input-group-addon">在用人:</span>
+                <input type="text" class="form-control" placeholder="请填写借用人名" disabled value="{{ res_obj.user }}"
+                    name="borrow_user" id="borrow_user" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">规格型号:</span>
+                <input type="text" class="form-control" placeholder="例：MagicBook 15" disabled
+                    value="{{ res_obj.detail_info.specifications }}" name="specifications" autocomplete="off">
+            </div><br>
+
+            <div class="layui-form-item">
+                <label style="text-align: center;width: unset;" class="layui-form-label">在用人是否准确</label>
+                <div class="layui-input-block">
+                    <input type="radio" lay-filter="sex" name="sex" value="yes" title="是" checked="">
+                    <input type="radio" lay-filter="sex" name="sex" value="no" title="否">
+                </div>
+            </div>
+            <input type="submit"  class="btn btn-success btn-lg btn-block" value="提交">
+        </form>
+        <div id="storage_value" style="display: none;">{{ scan_name }}</div>
+    </div>
+    <script>
+        layui.use(['form', 'layer', 'jquery'], function () {
+            $ = layui.jquery;
+            var layer = layui.layer,
+                form = layui.form;
+            var scan_user = $("#storage_value").text()
+            var borrow_user = $("input[name='borrow_user']").val();
+            //监听多选框点击事件  主要是通过 lay-filter="sex"  来监听
+            form.on('radio(sex)', function (data) {
+                console.log(data.value);//打印当前选择的信息
+                var message = data.value;   //  当前选中的value值
+                if (message == 'yes') {
+                    $("input[name='borrow_user']").val(borrow_user);
+                    $("input[name='borrow_user']").attr("disabled", "disabled");
+                } else if (message == 'no') {
+                    $("input[name='borrow_user']").val(scan_user);
+                    console.log(scan_user)
+                    $("input[name='borrow_user']").removeAttr("disabled");
+                }
+            });
+        })
+
+    </script>
+</body>
+
+</html>

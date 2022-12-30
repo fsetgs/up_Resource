@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扫码</title>
+    <style>
+        div {
+            margin-top: 50%;
+            text-align: center;
+        }
+        button {
+            background-color: #0089ff;
+            border: none;
+            border-radius: 2%;
+            width: 80%;
+            padding: 10px 0;
+            margin: 0 auto;
+            color: #e4f3ff;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <button onclick="getCode()">扫码</button>
+    </div>
+    <script src="//g.alicdn.com/dingding/open-develop/1.6.9/dingtalk.js"></script>
+    <script>
+        function getCode(){
+            dd.ready(function(){
+
+                dd.runtime.permission.requestAuthCode({ //获取code
+                    corpId: "dinge2a49b8c0bc04478", //企业corpId不要泄露
+                    onSuccess: function(result) {
+                    /*{
+                        code: 'hYLK98jkf0m' //string authCode
+                    }*/
+
+                        dd.biz.util.scan({ //调用扫码
+                            type: 'all' , // type 为 all、qrCode、barCode，默认是all。
+                            onSuccess: function(data) {
+                            //onSuccess将在扫码成功之后回调
+                            /* data结构
+                                { 'text': String}
+                            */
+                                window.location.href="http://120.78.177.255:8801/check/scan/?message=" + data.text +"&code=" + result.code
+                            },
+                            onFail : function(err) {
+                                window.location.href="http://120.78.177.255:8801/check/scan/?err=" + err
+                            }
+                        })
+
+                    },
+                    onFail : function(err) {}
+                
+                })
+
+
+            });
+        }
+    </script>
+</body>
+</html>

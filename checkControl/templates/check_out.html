@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>增加展点内容</title>
+    <link rel="stylesheet" href="{% static 'serverdb/css/bootstrap.min.css' %}">
+    <script type="text/javascript" src="{% static 'serverdb/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'serverdb/js/bootstrap.min.js' %}"></script>
+    <link href="{% static 'layui/css/layui.css' %}" rel="stylesheet">
+    <style>
+        .padding2px{
+            padding: 2px;
+            border:rgb(3,155, 173) 1px solid;
+            background-color: rgb(7,31,72);
+            /* text-align: center; */
+            color: white;
+            /* line-height: 45px; */
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .padding2px span{
+            pointer-events: none;
+        }
+        select {
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            color: #555;
+            border: 1px solid #ccc;
+            box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+            border-radius: 0 4px 4px 0;
+            font-size: 14px;
+            line-height: 1.42857143;
+            outline: none;
+        }
+        .check-user {
+            position: relative;
+        }
+        .check-user button {
+            z-index: 2;
+            position: absolute;
+            right: 0;
+            bottom: -5px;
+        }
+    </style>
+</head>
+<body> 
+    <div class="container">
+        <div class="modal-header">
+            <h2 class="modal-title" id="myModalLabel">盘点数据导出</h2>
+        </div><br>
+        
+        <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+            <div class="input-group">
+                <span class="input-group-addon">导出盘点范围:</span>
+                <select class="layui-form layui-col-md6 x-so" name="check" id="check" lay-verify="">
+                    <option value="">请选择盘点单</option>
+                    {% for obj in check_obj %}
+                      <option value="{{ obj.id }}">{{ obj.name }}</option>
+                    {% endfor %}
+                </select>
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">导出盘点状态:</span>
+                <select class="layui-form layui-col-md6 x-so" name="status" id="status" lay-verify="">
+                    <option value="all">请选择导出状态</option>
+                    <option>已盘点</option>
+                    <option>未盘点</option>
+                    <option value="all">以上所有</option>
+                </select>
+            </div><br>
+
+            <input type="button" onclick="download()" class="btn btn-success btn-lg btn-block" value="提交">
+        </form>
+
+        <div id="schedule" style="margin-top: 50px;display: none;">
+            <span>进度：</span>
+            <div class="layui-progress layui-progress-big" lay-filter="demo" lay-showPercent="true">
+                <div class="layui-progress-bar" lay-percent="0%"></div>
+            </div>
+        </div>
+        
+    </div>
+    
+    <script src="{% static 'layui/layui.js' %}"></script>
+    <script>
+        function download(){
+            $("input[type='button']").attr('disabled','disabled');
+            var check = $("#check").val();
+            var status = $("#status").val();
+            if(check==""){ //
+            layer.open({
+                title: '导出提示'
+                ,content: '请选择导出范围'
+                ,btn: ['确定']
+                ,yes: function(index, layero){
+                    layer.close(index);
+                }
+            });
+            $("input[type='button']").removeAttr('disabled');
+            return false;
+            }
+
+            $("#schedule").css('display','block') //显示进度条
+
+            layer.open({
+                title: '导出提示'
+                ,content: '正在进行数据导出中，请耐心等待。若数据量较大，则时间越长。'
+                ,btn: ['确定']
+                ,yes: function(index, layero){
+                    layer.close(index);
+                }
+            });
+            var data = new FormData();
+            data.append("check",check);
+            data.append("status",status);
+            console.log(check,status)
+            $.ajax({			
+            type:"POST",
+			url:"/check/check_out/",
+			data:data,
+			processData:false,
+			contentType:false,
+			dataType:"json",
+			success:function(result){
+                console.log(result.message)
+                if(result.message=='success'){
+                    layui.use('element', function(){
+                        var element = layui.element;
+                        element.progress('demo', '100%');
+                    })
+                    window.location.href=result.url
+                }else if(result.message=='failed'){
+                    $("#schedule").css('display','none')
+                    layer.open({
+                        title: '导出提示'
+                        ,content: '原因：无符合数据。'
+                    });
+                }
+            }
+            });
+        }
+    </script>
+</body>
+</html>

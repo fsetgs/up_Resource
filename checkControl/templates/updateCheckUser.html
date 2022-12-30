@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>增加展点内容</title>
+    <link rel="stylesheet" href="{% static 'serverdb/css/bootstrap.min.css' %}">
+    <script type="text/javascript" src="{% static 'serverdb/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'serverdb/js/bootstrap.min.js' %}"></script>
+    <style>
+        .padding2px{
+            padding: 2px;
+            border:rgb(3,155, 173) 1px solid;
+            background-color: rgb(7,31,72);
+            /* text-align: center; */
+            color: white;
+            /* line-height: 45px; */
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .padding2px span{
+            pointer-events: none;
+        }
+        select {
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            color: #555;
+            border: 1px solid #ccc;
+            box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+            border-radius: 0 4px 4px 0;
+            font-size: 14px;
+            line-height: 1.42857143;
+            outline: none;
+        }
+        .check-user {
+            position: relative;
+        }
+        .check-user button {
+            z-index: 2;
+            position: absolute;
+            right: 0;
+            bottom: -5px;
+        }
+    </style>
+</head>
+<body> 
+    <div class="container">
+        <div class="modal-header">
+            <h2 class="modal-title" id="myModalLabel">修改盘点员信息</h2>
+        </div><br>
+        
+        <form action="/check/updateCheckUser/{{ adminUser_obj.id }}/" method="POST" enctype="multipart/form-data">{% csrf_token %}
+            
+            <div class="input-group">
+                <span class="input-group-addon">盘点单名称:</span>
+                <select class="layui-form layui-col-md6 x-so" name="check_name" id="company" lay-verify="">
+                    {% for obj in check_obj %}
+                      <option {% if obj.name == adminUser_obj.t_check.name %} selected {% endif %}>{{ obj.name }}</option>
+                    {% endfor %}
+                </select>
+            </div><br>
+            <div class="check-user">
+                <div class="input-group">
+                    <span class="input-group-addon">盘点员姓名:</span>
+                    <input type="text" class="form-control" placeholder="请保持与钉钉一致" name="user_name" value="{{ adminUser_obj.name }}" autocomplete="off">
+                </div><br>
+                <div class="input-group">
+                    <span class="input-group-addon">盘点员手机号:</span>
+                    <input type="text" class="form-control" placeholder="请保持与钉钉一致" name="user_phone" value="{{ adminUser_obj.phone }}" autocomplete="off">
+                </div>
+            </div><br>
+            <!-- <div class="input-group">
+                <span class="input-group-addon">备注:</span>
+                <input type="text" class="form-control" placeholder="备注(不超过20字)" name="comment" value="" autocomplete="off">
+            </div><br> -->
+
+            <input type="submit" class="btn btn-success btn-lg btn-block" value="提交">
+        </form>
+        
+    </div>
+    
+    
+</body>
+
+<script>
+    
+    $('.padding2px').click(function(){
+        // alert($(this).attr("id"));
+        $('#area').attr("value",$(this).attr("id"));
+    });
+
+</script>
+</html>

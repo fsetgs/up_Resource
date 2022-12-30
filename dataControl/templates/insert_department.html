@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>增加展点内容</title>
+    <link rel="stylesheet" href="{% static 'serverdb/css/bootstrap.min.css' %}">
+    <script type="text/javascript" src="{% static 'serverdb/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'serverdb/js/bootstrap.min.js' %}"></script>
+    <style>
+        .container {
+            margin-bottom: 5px;
+        }
+        select {
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            color: #555;
+            border: 1px solid #ccc;
+            box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+            border-radius: 0 4px 4px 0;
+            font-size: 14px;
+            line-height: 1.42857143;
+            outline: none;
+        }
+    </style>
+</head>
+<body> 
+    <div class="container">
+        <div class="modal-header">
+            <h2 class="modal-title" id="myModalLabel">信息修改</h2>
+        </div><br>
+        
+        <form action="/data/insert_department/" method="POST">{% csrf_token %}
+            
+            <div class="input-group">
+                <span class="input-group-addon">所属公司:</span>
+                <select class="layui-form layui-col-md6 x-so" name="company" lay-verify="">
+                    <option value="01">选择分类</option>
+                    {% for obj in company_obj %}
+                      <option value="{{ obj.code }}">{{ obj.name }}</option>
+                    {% endfor %}
+                </select>
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">添加部门:</span>
+                <input type="text" class="form-control" placeholder="例：总裁办" name="department_name" autocomplete="off">
+            </div><br>
+            <div class="input-group">
+                <span class="input-group-addon">部门编码:</span>
+                <input type="text" class="form-control" placeholder="例：ZCB(部门拼音缩写)" name="department_code" autocomplete="off">
+            </div><br>
+
+            <input type="submit" class="btn btn-success btn-lg btn-block" value="提交">
+        </form>
+        
+    </div>
+    
+    
+</body>
+
+</html>

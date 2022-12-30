@@ -1,0 +1,8 @@
+{
+<<<<<<< HEAD
+    "python.analysis.typeCheckingMode": "basic"
+=======
+    "python.analysis.typeCheckingMode": "basic",
+    "python.languageServer": "Pylance"
+>>>>>>> cd082f6 (second)
+}

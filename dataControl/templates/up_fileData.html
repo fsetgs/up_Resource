@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"> 
+	<title>Bootstrap 实例 - 标签页（Tab）插件</title>
+	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        .form-group {
+            margin-top: 60px;
+        }
+        .notice {
+            font-size: 16px;
+            width: 800px;
+            height: 500px;
+            margin-left: 18%;
+            margin-top: 100px;
+            font-weight: 400;
+        }
+    </style>
+</head>
+<body>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">附件:</label>
+		<div class="col-sm-7">
+			<input id="myfile" type="file" accept=".xlsx" style="display: none" single>
+			<!--显⽰上传的⽂件名字-->
+			<input type="text" placeholder="此处仅显示浏览文件名，尽量单次上传一个文件。" id="FileCover" class="form-control" readonly="true">
+		</div>
+		<div class="col-sm-1">
+			<button class="btn btn-primary btn-sm " type="button"  onclick="$('input[id=myfile]').click();">
+				<i class="fa fa-folder-open" id="browse">&nbsp;&nbsp;选择导入</i>
+			</button>
+		</div>
+		<div class="col-sm-1">
+			<button class="btn btn-primary btn-sm " type="button"  onclick="MyUpload()">
+				<i class="fa fa-send" id="upload_status">&nbsp;&nbsp;数据上传</i>
+			</button>
+		</div>
+	</div>
+	<div id="show_upload"></div><br>
+    <div class="notice">
+        <div>
+            <h3 >注意事项：</h3>
+            <ul>
+                <h4>一、关于表格上传</h4>
+                <li>上传文件时，被上传的文件保持关闭状态。</li>
+                <li>若上传的表格数据量较大可稍等两分钟再次上传文件。</li>
+                <h4>二、关于表格数据</h4>
+                <li>填写的公司一定是要存在的</li>
+                <li>部门（同上）</li>
+                <li>资产分类（同上）</li>
+                <li>采购日期格式严格按照：xxxx-xx-xx（例：2012-01-01，非2012-01-01 00:00:00）</li>
+                <li>所属公司字段：填写的公司必须是后台已添加过/存在的</li>
+                <li>所属部门字段：填写的部门必须是后台已添加过/存在的</li>
+                <li>资产分类字段：填写的编码必须是后台已添加过/存在的</li>
+                <li>采购日期格式严格按照：xxxx-xx-xx（例：2012-01-01，非2012-01-01 00:00:00）</li>
+                <p>以上若不知道以上字段中是否有某个信息，可在 资产管理平台-资产管理->资产选填补充 中查看或补充。</p>
+            </ul>
+        </div>
+    </div>
+
+</body>
+<script src="{% static 'layui/layui.js' %}"></script>
+
+<script>
+    
+	$('input[id=myfile]').change(function () {
+        var myfiles = document.getElementById("myfile").files;
+        var file_index = 0;
+        var file_len = myfiles.length;
+        while (file_index < file_len) {
+            myfilename = myfiles[file_index].name + ";";
+            file_index = file_index + 1;
+        }
+        //console.log(myfiles);
+        //$('#FileCover').val($(this).val());
+        $('#FileCover').val(myfilename);
+	})
+
+	function MyUpload(){
+    var myfiles = document.getElementById("myfile").files;//获取⽂件
+    var totalfile = myfiles.length;//上传的⽂件个数
+    if(totalfile>0){
+        $("button[type='button']").attr("disabled",true)
+
+    }
+    var uploadedfile = 0;//已上传的⽂件个数
+    var data = new FormData();//构建FormData⽤于Ajax发送
+    var file_index = 0;
+    //每上传⼀个⽂件，添加⼀个进度条
+    var addhtml = " <div id=\"backname\" class=\"col-sm-9\">⽂件1</div>\n" +
+        "                                    <div id=\"backurl\" style=\"display: none\"></div>\n" +
+        "                                    <div class=\"col-sm-2\">上传进度:</div>\n" +
+        "                                    <div id=\"percentage\" class=\"col-sm-1\">100%</div>\n" +
+        "                                    <div class=\"clearfix\"></div>\n" +
+        "                                    <div class=\"progress progress-small\" >\n" +
+        "                                        <div id=\"percentagebar\" style=\"width:0%;\" class=\"progress-bar progress-bar-success \"></div>\n" +
+        "                                    </div> ";
+    $("#show_upload").empty();//每次点击上传按钮，把所有的进度条清空
+    while (file_index < myfiles.length){
+        data.append('file', myfiles[file_index]);// 获取1个⽂件放⼊FormData中
+        var percentage = null;//上传进度
+        $.ajax({
+            type: "POST",
+            url: "/data/up_fileData/",
+            data: data,
+            processData: false, // 告诉jQuery不要处理数据
+            contentType: false, // 告诉jQuery不要设置类型
+            dataType:"json",
+            xhr:function xhr(){
+                var newbackname = "backname" + file_index;//⽂件名，本来想写后台返回的，懒
+                var newbackurl = "backurl" + file_index;//每个⽂件上传后，返回的前台访问的url
+                var newp = "percentage" + file_index;//每个⽂件的进度
+                var newpbar = "percentagebar" + file_index;//每个进度条的名字
+                var myfilename = myfiles[file_index].name;
+                $("#show_upload").append(addhtml);
+                $("#backname").attr('id',newbackname);
+                $("#backurl").attr('id',newbackurl);
+                $("#percentage").attr('id',newp);
+                $("#percentagebar").attr('id',newpbar);
+                var myxhr = $.ajaxSettings.xhr();
+                if(myxhr.upload){
+                    myxhr.upload.addEventListener('progress',function (e) {
+                        if(e.lengthComputable){
+                            percentage = parseInt(e.loaded / e.total * 100);
+                            var now_percentage = percentage + "%";
+                            $("#"+newp).html(now_percentage);
+							$("#"+newpbar).css({"width":now_percentage});
+                            $("#"+newbackname).html(myfilename);
+                        }
+                    },false);
+                }
+                return myxhr;
+            },
+            success: function(result){
+                //每次上传完毕后得到返回值，取出返回的json值
+                var message = result.message;
+                console.log(message)
+                if(message){
+                    layer.open({
+                        title: '上传提示'
+                        ,content: message
+                    });     
+        
+                }
+            }
+        });
+        file_index = file_index + 1;
+    }
+	}							
+</script>
+</html>
