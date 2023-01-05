@@ -72,9 +72,18 @@
                 </select>
             </div><br>
             <div id="borrowInfo" {% if res_obj.resource_status != "在用" %} style="display: none;" {% endif %}>
-                <div class="input-group">
+                <!-- <div class="input-group">
                     <span class="input-group-addon">借用部门:</span>
                     <input type="text" class="form-control" placeholder="请填写部门名" name="borrow_department" value="{{ res_obj.borrow_department }}" autocomplete="off">
+                </div><br> -->
+                <div class="input-group">
+                    <span class="input-group-addon">借用部门:</span>
+                    <select class="layui-form layui-col-md6 x-so" name="borrow_department" id="borrow_department" lay-verify="">
+                        {% for obj in department_obj %}
+                          <option {% if obj.name == res_obj.borrow_department %} selected {% endif %}>{{ obj.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <!-- <input type="text" class="form-control" placeholder="请填写部门名" name="department" value="{{ res_obj.department.name }}" autocomplete="off"> -->
                 </div><br>
                 <div class="input-group">
                     <span class="input-group-addon">借用人:</span>
@@ -141,9 +150,11 @@
         if(long!=0){
             for(var i=0;i<long;i++){
                 $("#department").append("<option value="+departments[i]+">"+departments[i]+"</option>");
+                $("#borrow_department").append("<option value="+departments[i]+">"+departments[i]+"</option>");
             }
         }else{
             $("#department").append("<option value="+"None"+">"+"暂无对应部门"+"</option>");
+            $("#borrow_department").append("<option value="+"None"+">"+"暂无对应部门"+"</option>");
         }
     }
 </script>

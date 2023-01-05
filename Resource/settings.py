@@ -28,13 +28,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-# # 配置session的存在时间
-# SESSION_COOKIE_AGE=60*60*24*7*2
+# 配置session的存在时间
+SESSION_COOKIE_AGE=60*60*24*7*2
 
-# # SESSION_SAVE_EVERY_REQUEST = True
+SESSION_SAVE_EVERY_REQUEST = True
 
-# # 配置Session是否生效
-# SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# 配置Session是否生效
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 #设置是否启用frame或iframe
 X_FRAME_OPTIONS = 'SAMEORIGIN'

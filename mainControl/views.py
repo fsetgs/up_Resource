@@ -68,7 +68,8 @@ def get_user_info(request,access_token,userID):
 
 def index(request):
     if request.method == "GET":
-        return render(request,"index.html")
+        login_company = request.GET.get("login_company")
+        return render(request,"index.html",locals())
 
 def index_data(request):
     if request.method == "GET":

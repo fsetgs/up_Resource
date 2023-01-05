@@ -61,18 +61,20 @@
             <div class="input-group">
                 <span class="input-group-addon">所属公司:</span>
                 <select class="layui-form layui-col-md6 x-so" name="company" id="company" onchange="getValue()" lay-verify="">
-                    <option value="">请选择所属公司</option>
+                    <!-- <option value="">请选择所属公司</option> -->
                     {% for obj in company_obj %}
-                      <option>{{ obj.name }}</option>
+                      <option {% if obj.name == user_obj.company %} selected {% endif %}>{{ obj.name }}</option>
                     {% endfor %}
                 </select>
             </div><br>
             <div class="input-group">
                 <span class="input-group-addon">所属部门:</span>
                 <select class="layui-form layui-col-md6 x-so" name="department" id="department" lay-verify="">
+                    {% if user_obj.department == "None" %}
                     <option value="">请选择所属部门</option>
+                    {% endif %}
                     {% for obj in department_obj %}
-                      <option>{{ obj.name }}</option>
+                      <option {% if obj.name == user_obj.department %} selected {% endif %}>{{ obj.name }}</option>
                     {% endfor %}
                 </select>
             </div><br>

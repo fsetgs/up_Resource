@@ -89,8 +89,9 @@ def search_user(request):
 def update(request,id):
     id = int(id)
     user_obj = userInfo.objects.get(id=id)
+    company_id = company.objects.get(name=user_obj.company)
     company_obj = company.objects.all()
-    # department_obj = department.objects.all()
+    department_obj = department.objects.filter(company_id=company_id)
     if request.method == "GET":
         return render(request,"updateUser.html",locals())
 
@@ -151,7 +152,8 @@ def verifyIdentity(request):
             try:
                 user_obj = userInfo.objects.get(real_name=scan_name,phone=phone)
                 if user_obj:
-                    return redirect(to="/main/index/")
+                    request.session['company'] = user_obj.company
+                    return redirect(to=f"/main/index/?login_company={user_obj.company}")
             except:
                 return HttpResponse(f"<h1>您为非管理员！若要进入可联系资产管理管理员</h1>")
         return HttpResponse("<h1>该接口为钉钉入口。</h1>")

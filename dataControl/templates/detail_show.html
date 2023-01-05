@@ -98,24 +98,24 @@
                 </div><br>
                 <div class="input-group">
                     <span class="input-group-addon">领用&借用人:</span>
-                    <input type="text" class="form-control" placeholder="请填写借用人名" name="borrow_user" value="{{ res_obj.user }}" autocomplete="off">
+                    <input type="text" class="form-control" placeholder="请填写借用人名" name="borrow_user" value="{{ res_obj.user|ValueToStr }}" autocomplete="off">
                 </div><br>
                 <div class="input-group">
                         <span class="input-group-addon">领用&借用日期:</span>
-                        <input type="text" class="layui-input form-control" name="borrow_time" value="{{ res_obj.borrow_time }}" id="borrow_time" autocomplete="off" placeholder="yyyy-MM-dd" >
+                        <input type="text" class="layui-input form-control" name="borrow_time" value="{{ res_obj.borrow_time|ValueToStr }}" id="borrow_time" autocomplete="off" placeholder="yyyy-MM-dd" >
                 </div><br>
                 <div class="input-group">
                         <span class="input-group-addon">预归还日期:</span>
-                        <input type="text" class="layui-input form-control" name="return_time" value="{{ res_obj.return_time }}" id="return_time" autocomplete="off" placeholder="yyyy-MM-dd" >
+                        <input type="text" class="layui-input form-control" name="return_time" value="{{ res_obj.return_time|ValueToStr }}" id="return_time" autocomplete="off" placeholder="yyyy-MM-dd" >
                 </div><br>
             </div>
             <div class="input-group">
                 <span class="input-group-addon">存放区域:</span>
-                <input type="text" class="form-control" placeholder="例：深圳保税区" name="location_area" value="{{ res_obj.location_area }}" autocomplete="off">
+                <input type="text" class="form-control" placeholder="例：深圳保税区" name="location_area" value="{{ res_obj.location_area|ValueToStr }}" autocomplete="off">
             </div><br>
             <div class="input-group">
                 <span class="input-group-addon">存放地点:</span>
-                <input type="text" class="form-control" placeholder="请填写详细存放地点" name="location" value="{{ res_obj.location }}" autocomplete="off">
+                <input type="text" class="form-control" placeholder="请填写详细存放地点" name="location" value="{{ res_obj.location|ValueToStr }}" autocomplete="off">
             </div><br>
             <div class="input-group">
                     <span class="input-group-addon">入库日期:</span>
@@ -127,15 +127,15 @@
             </div><br>
             <div class="input-group">
                 <span class="input-group-addon">资产原值(元):</span>
-                <input type="text" class="form-control" placeholder="填写数字即可" name="resource_price" value="{{ res_obj.detail_info.resource_price }}" autocomplete="off">
+                <input type="text" class="form-control" placeholder="填写数字即可" name="resource_price" value="{{ res_obj.detail_info.resource_price|ValueToStr }}" autocomplete="off">
             </div><br>
             <div class="input-group">
                 <span class="input-group-addon">折旧周期(月):</span>
-                <input type="text" class="form-control" placeholder="填写数字即可" name="depreciation_period" value="{{ res_obj.detail_info.depreciation_period }}" autocomplete="off">
+                <input type="text" class="form-control" placeholder="填写数字即可" name="depreciation_period" value="{{ res_obj.detail_info.depreciation_period|ValueToStr }}" autocomplete="off">
             </div><br>
             <div class="input-group">
                 <span class="input-group-addon">残值率(%):</span>
-                <input type="text" class="form-control" placeholder="填写数字即可" name="residuals_rate" value="{{ res_obj.detail_info.residuals_rate }}" autocomplete="off">
+                <input type="text" class="form-control" placeholder="填写数字即可" name="residuals_rate" value="{{ res_obj.detail_info.residuals_rate|ValueToStr }}" autocomplete="off">
             </div><br>
             <!-- <div class="input-group">
                 <span class="input-group-addon">资产残值(元):</span>

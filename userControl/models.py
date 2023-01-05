@@ -8,6 +8,7 @@ class company(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(verbose_name="公司名称",max_length=50,null=True,blank=True)
     code = models.CharField(verbose_name="编码",max_length=10,null=True,blank=True)
+    is_header = models.CharField(verbose_name="是否为总部",max_length=5,default="0") # 0不是 1是
     comment = models.CharField(verbose_name="备注",max_length=50,null=True,blank=True)
     
 

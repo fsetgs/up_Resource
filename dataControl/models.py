@@ -70,7 +70,7 @@ class resource(models.Model):
     code = models.CharField(verbose_name="资产编码",max_length=20,default="0")
     location = models.CharField(verbose_name="存放地点",max_length=100,null=True,blank=True)
     location_area = models.CharField(verbose_name="存放区域",max_length=100,null=True,blank=True)
-    duty = models.CharField(verbose_name="责任人",max_length=20,default="暂无")
+    duty = models.CharField(verbose_name="责任人",max_length=20,null=True,blank=True)
     # user = models.ForeignKey(verbose_name="借用人",to=userInfo,to_field="id",on_delete=models.CASCADE,null=True,blank=True)
     user = models.CharField(verbose_name="借用人",max_length=20,null=True,blank=True)
     borrow_department = models.CharField(verbose_name="借用部门",max_length=20,null=True,blank=True)

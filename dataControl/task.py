@@ -4,8 +4,11 @@ import openpyxl
 from Resource.settings import *
 from dateutil import rrule
 import datetime
+from openpyxl import Workbook
+from django.db import close_old_connections
 @shared_task
 def updata(files):
+    close_old_connections()
     # for file in files:
     #     up_url = MEDIA_ROOT + '/tempUpfile/' + file.name
     #     print(up_url)
@@ -100,7 +103,9 @@ def updata(files):
     #         res_obj.save()
     #     os.remove(up_url)
     row_num = 2
+    error_line =  2
     row_list = []
+    code_list = []
     for file in files:
         up_url = MEDIA_ROOT + '/tempUpfile/' + file.name
         print(up_url)
@@ -111,6 +116,17 @@ def updata(files):
         workbook = openpyxl.load_workbook(up_url,data_only=True)
         sheet = workbook['Sheet1']
         rows = sheet.max_row #获取最大行
+
+
+        # 将录入失败的数据综合出来
+        upfile_url = MEDIA_ROOT + '/samedata/' + file.name
+        wb = Workbook()
+        wb.create_sheet(index=0,title="Sheet1")
+        ws = wb.active
+        ws['A1'] = '未录入的资产编码'
+        ws['B1'] = '问题数据所在行'
+        ws['C1'] = '问题可能原因'
+
         # 按行获取值
         for row_obj in sheet.iter_rows(min_row=2,max_row=rows,min_col=2,max_col=30):
             try:
@@ -146,19 +162,44 @@ def updata(files):
                 sn = row_obj[26].value
                 mac = row_obj[27].value
                 comment = row_obj[28].value
-                resource_info_obj = resourceInfo.objects.create(storage_time=storage_time,buy_time=buy_time,resource_price=price,depreciation_period=depreciation_period,
-                residuals_rate=residuals_rate,resource_residuals=resource_residuals,units=units,provider=provider,mac=mac,sn=sn,comment=comment,
-                specifications=specifications)
+                res_obj = resource.objects.filter(code=code)
+                if len(res_obj) == 0:
+                    resource_info_obj = resourceInfo.objects.create(storage_time=storage_time,buy_time=buy_time,resource_price=price,depreciation_period=depreciation_period,
+                    residuals_rate=residuals_rate,resource_residuals=resource_residuals,units=units,provider=provider,mac=mac,sn=sn,comment=comment,
+                    specifications=specifications)
 
-                resource.objects.create(code=code,name=name,location=location,location_area=localtion_area,duty=duty,user=borrow_user,borrow_department=borrow_department,
-                company=company_obj,resource_type=type_obj,resource_from=resource_from,resource_status=resource_status,borrow_time=borrow_time,
-                return_time=return_time,detail_info=resource_info_obj,department=department_obj)
-                row_num += 1
+                    resource.objects.create(code=code,name=name,location=location,location_area=localtion_area,duty=duty,user=borrow_user,borrow_department=borrow_department,
+                    company=company_obj,resource_type=type_obj,resource_from=resource_from,resource_status=resource_status,borrow_time=borrow_time,
+                    return_time=return_time,detail_info=resource_info_obj,department=department_obj)
+                    row_num += 1
+                else:
+                    # 综合问题数据
+                    ws[f'A{error_line}'] = code
+                    ws[f'B{error_line}'] = row_num
+                    ws[f'C{error_line}'] = "1.录入时文件中有两个相同的编码 2.该条数据已存在后台中"
+                    error_line += 1
+
+                    code_list.append(code)
+                    row_list.append(row_num)
+                    row_num += 1
             except Exception as e:
+                code = row_obj[0].value
+                
+                # 综合问题数据
+                ws[f'A{error_line}'] = code
+                ws[f'B{error_line}'] = row_num
+                ws[f'C{error_line}'] = "1.所属公司与后台录入不匹配/后台未录入 2.所属部门未在后台所属公司中录入 3.资产编码3-4位大于19 4.此条数据格式有问题"
+                error_line += 1
+
+                # code_list.append(code)
                 row_list.append(row_num)
                 print("未录入行：",row_num,e)
                 row_num += 1
                 continue
-        print(row_num)
-        print(row_list)
+        print("总条数",row_num-2)
+        print("资产编码冲突的",code_list)
+        print("未录入的",row_list)
+
+        if error_line > 2:
+            wb.save(upfile_url)
         os.remove(up_url)

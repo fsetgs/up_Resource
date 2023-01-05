@@ -55,7 +55,7 @@
             <h2 class="modal-title" id="myModalLabel">资产信息</h2>
         </div><br>
 
-        <form class="layui-form" action="/check/update_scan_info/{{ res_obj.id }}/admin/" method="get" enctype="multipart/form-data">{% csrf_token %}
+        <form class="layui-form" action="/check/update_scan_info/{{ res_obj.id }}/user/" method="get" enctype="multipart/form-data">{% csrf_token %}
             <div class="input-group">
                 <span class="input-group-addon">资产编码:</span>
                 <input type="text" class="form-control" placeholder="填写资产" disabled value="{{ res_obj.code }}"

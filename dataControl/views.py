@@ -41,7 +41,12 @@ def search_paginator(request,index_list,code,method):
 # 数据采集展示
 def data_show(request):
     if request.method == "GET":
-        resource_obj = resource.objects.all().order_by("-id")
+        login_company = request.session.get("company",None)
+        company_obj = company.objects.get(name=login_company)
+        if company_obj.is_header == "1":
+            resource_obj = resource.objects.all().order_by("-id")
+        else:
+            resource_obj = resource.objects.filter(company=company_obj).order_by("-id")
         return render(request,"dataShow.html",paginator(request,resource_obj))
 
 # 添加资产
@@ -188,6 +193,10 @@ def detail_show(request,id):
         status_obj = resourceStatus.objects.all()
         company_obj = company.objects.all()
         department_obj = department.objects.filter(company=res_obj.company)
+        localtion_area = resourceLocation.objects.all()
+        resourcename_obj = resourceName.objects.all()
+        units_obj = resourceUnits.objects.all()
+        provider_obj = resourceProvider.objects.all()
         return render(request,"detail_show.html",locals())
     if request.method == "POST":
         company_name = request.POST.get("company_name")
@@ -275,16 +284,23 @@ def updateData(request,id):
                 return HttpResponse("<h1>该类型不存在</h1>")
 
              # 计算资产残值、月折旧额、累计折旧、资产净值
-            if resource_price != "" and depreciation_period != "" and residuals_rate != "":
-                resource_residuals = str(int(resource_price)*int(residuals_rate)/100)
-                month_depreciation = round(int(resource_price)*(1-int(residuals_rate)/100)/int(depreciation_period),2)
-                storage_date = datetime.datetime.strptime(storage_time,"%Y-%m-%d")
-                months = rrule.rrule(rrule.MONTHLY,dtstart=storage_date,until=datetime.datetime.now()).count()
-                if months <= int(depreciation_period):
-                    total_depreciation = str(months*int(month_depreciation))
-                else:
-                    total_depreciation = str(int(month_depreciation)*int(depreciation_period))
-                net_value = str(int(resource_price)-int(total_depreciation))
+            try:
+                if resource_price != "" and depreciation_period != "" and residuals_rate != "":
+                    resource_residuals = str(int(resource_price)*int(residuals_rate)/100)
+                    month_depreciation = round(int(resource_price)*(1-int(residuals_rate)/100)/int(depreciation_period),2)
+                    storage_date = datetime.datetime.strptime(storage_time,"%Y-%m-%d")
+                    months = rrule.rrule(rrule.MONTHLY,dtstart=storage_date,until=datetime.datetime.now()).count()
+                    if months <= int(depreciation_period):
+                        total_depreciation = str(months*int(month_depreciation))
+                    else:
+                        total_depreciation = str(int(month_depreciation)*int(depreciation_period))
+                    net_value = str(int(resource_price)-int(total_depreciation))
+            except Exception as e:
+                resource_residuals = ""
+                month_depreciation = ""
+                total_depreciation = ""
+                net_value = ""
+                print("修改资产信息时计算报错",e)
             # 创建编码 公司编码+资产类型编码+部门编码+采购年月+顺序号（id）
             # res_num = id
             # if len(str(res_num)) < 2:
@@ -328,11 +344,15 @@ def deleteResource(request,id):
         try:
             res_obj = resource.objects.get(id=id)
             res_info_obj = res_obj.detail_info
-            os.remove(MEDIA_ROOT + f'/QR_img/{res_obj.code}.jpg')
+            try:
+                os.remove(MEDIA_ROOT + f'/QR_img/{res_obj.code}.jpg')
+            except:
+                pass
             res_info_obj.delete()
             res_obj.delete()
             return redirect(to="/data/data_show/")
-        except:
+        except Exception as e:
+            print(e)
             return redirect(to="/data/data_show/")
 
 @csrf_exempt
@@ -391,6 +411,10 @@ def returnResource(request,id):
         res_obj.return_time = ""
         res_obj.save()
         return redirect(to="/data/borrow_show/")
+
+# 资产转让审批
+def transfer(request):
+    return HttpResponse("该模块正在开发中！")
 
 # 资产类型展示
 def type_show(request):
@@ -478,6 +502,19 @@ def update_company(request,id):
         company_obj.code = code
         company_obj.save()
         return HttpResponse("<h1>操作成功，刷新页面即可。</h1>")
+
+def set_header(request,id):
+    if request.method == "GET":
+        try:
+            header_obj = company.objects.get(is_header="1")
+            set_obj = company.objects.get(id=id)
+            header_obj.is_header = "0"
+            header_obj.save()
+            set_obj.is_header="1"
+            set_obj.save()
+            return redirect(to="/data/company_show/")
+        except:
+            return redirect(to="/data/company_show/")
 
 def delete_company(request,id):
     if request.method == "GET":

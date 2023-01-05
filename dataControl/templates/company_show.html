@@ -74,6 +74,15 @@
                 <a class="layui-btn layui-btn-small layui-btn-normal" title="编辑"  onclick="x_admin_show('信息修改','/data/update_company/{{foo.id}}',900,800)">
                     <i class="layui-icon">&#xe642;</i>修改
                 </a>
+                {% if foo.is_header == "0" %}
+                <a class="layui-btn layui-btn-small " title="设为总部" href="/data/set_header/{{foo.id}}">
+                <i class="layui-icon">&#x1007;</i>设为总部
+                </a>
+                {% else %}
+                <a class="layui-btn layui-btn-small layui-btn-primary" title="当前总部" href="#">
+                <i class="layui-icon">&#x1005;</i>当前总部
+                </a>
+                {% endif %}
                 <a class="layui-btn layui-btn-small layui-btn-danger" title="删除" href="/data/delete_company/{{foo.id}}">
                 <i class="layui-icon">&#xe640;</i>删除
                 </a>

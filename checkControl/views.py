@@ -35,12 +35,17 @@ def insertCheck(request):
         company_name = request.POST.get("company")
         print("获取insert数据",check_name,user_name,user_phone,company_name)
         is_check = check.objects.filter(name=check_name)
+        print("是否重复：",is_check,bool(is_check))
         if is_check:
             return HttpResponse("<h1>已存在同名盘点单，请勿重复创建！</h1>")
         if company_name:
             if not check_name:
                 date = datetime.date.today()
                 check_name = str(date.year)+"年"+str(date.month)+"月"+str(date.day)+ "日-" + company_name + "盘点单"
+                is_check = check.objects.filter(name=check_name)
+                print("是否重复：",is_check,bool(is_check))
+                if is_check:
+                    return HttpResponse("<h1>已自动命名了该盘点单，请勿重复创建！</h1>")
             check_obj = check.objects.create(name=check_name,check_company=company_name)
             if user_name and user_phone:
                 check_admin.objects.create(t_check=check_obj,name=user_name,phone=user_phone)
@@ -108,11 +113,12 @@ def changeCheckStatus(request,id):
 
 def deleteCheck(request,id):
     if request.method == "GET":
-        check.objects.get(id=id).delete()
-        deletecheck.delay(id)
-        return redirect(to="/check/check_index/")
-
-
+        try:
+            check.objects.get(id=id).delete()
+            deletecheck.delay(id)
+            return redirect(to="/check/check_index/")
+        except:
+            return redirect(to="/check/check_index/")
 
 
 
@@ -156,6 +162,7 @@ def check_out(request):
             wb.save(upfile_url)
             data["message"] = "success"
             data["url"] = '/media/tempUpfile/' + relate_obj[0].t_check.name + ".xlsx"
+            return JsonResponse(data,safe=False)
         
         data["message"] = "failed"
         return JsonResponse(data,safe=False)
@@ -172,7 +179,7 @@ def search_check(request):
                 index_list = check_resource.objects.filter(t_resource=res_obj)
                 method = "get"
             elif method == "post":
-                index_list = check_resource.objects.filter(is_checked=code)
+                index_list = check_resource.objects.filter(is_checked__icontains=code)
                 method = "post"
         else:
             code = request.GET.get("search1")
@@ -185,7 +192,7 @@ def search_check(request):
         code = code
     if request.method == "POST":
         status = request.POST.get("search2")
-        index_list = check_resource.objects.filter(is_checked=status)
+        index_list = check_resource.objects.filter(is_checked__icontains=status)
         code = status
         method = "post"
     return render(request,"checked_index.html",search_paginator(request,index_list,code,method))
